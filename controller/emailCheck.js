@@ -10,9 +10,9 @@ export const emailCheck = async (req, res) => {
     const user = await getUserByEmail(inputEmail);
     console.log("user >>>", user);
     if (user.length > 0) {
-      res.json({ message: "이미 사용중인 아이디 입니다." });
+      res.json({ message: "이미 사용중인 아이디 입니다.", user: user });
     } else {
-      res.json({ message: "사용가능한 id입니다.", success: true }); // 사용자 없으면 404 반환
+      res.json({ message: "사용가능한 id입니다.", success: true, user: user }); // 사용자 없으면 404 반환
     }
   } catch (err) {
     console.error(err);

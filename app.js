@@ -11,11 +11,13 @@ const app = express();
 const port = process.env.PORT || 5001;
 
 // ✅ **CORS 설정 수정**
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://wrigglebaby.netlify.app", // Netlify 프론트엔드 주소 추가
-  "https://babynote.netlify.app",
-];
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(",")
+  : [
+      "http://localhost:3000",
+      "https://wrigglebaby.netlify.app", // 기본 허용 도메인 추가
+      "https://babynote.netlify.app",
+    ];
 
 app.use(
   cors({

@@ -5,9 +5,10 @@ import session from "express-session";
 import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
-app.options("*", cors()); // 모든 OPTIONS 요청 허용
 
 const app = express();
+app.options("*", cors()); // 모든 OPTIONS 요청 허용
+
 const port = process.env.PORT || 5001;
 
 // ✅ **CORS 설정 수정**

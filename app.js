@@ -14,6 +14,7 @@ const port = process.env.PORT || 5001;
 const allowedOrigins = [
   "http://localhost:3000",
   "https://wrigglebaby.netlify.app", // Netlify 프론트엔드 주소 추가
+  "https://babynote.netlify.app",
 ];
 
 app.use(

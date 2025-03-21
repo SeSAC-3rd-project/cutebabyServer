@@ -64,33 +64,36 @@ export const updateBaby = async (req, res) => {
     const { babyid, babyname, birthday, gender, existingPicture } = req.body;
     let picture = req.file ? req.file.buffer : null;
 
-    // ✅ 기존 이미지를 유지해야 하는 경우
-    if (!req.file && !existingPicture) {
-      console.log("✅ 기존 이미지 유지");
-      const [rows] = await db.execute(
-        "SELECT picture FROM babyinfo WHERE babyid = ?",
-        [babyid]
-      );
-      if (rows.length > 0) {
-        picture = rows[0].picture; // 기존 BLOB 이미지 유지
-      }
-    }
-    if (existingPicture == "") {
-      console.log("사진이 비었음 삭제요청!");
-      const [rows] = await db.execute(
-        "SELECT picture FROM babyinfo WHERE babyid = ?",
-        [babyid]
-      );
+    // ✅ 1. 기본 이미지로 바꾸려는 경우
+    if (existingPicture === "data:image/jpeg;base64,") {
+      console.log("✅ 기본 이미지로 변경합니다.");
       const defaultImagePath = path.join(
         __dirname,
         "../../../public/img/babybasic.png"
       );
 
       try {
-        picture = fs.readFileSync(defaultImagePath); // 🚀 기본 이미지 파일을 `BLOB`으로 변환
+        picture = fs.readFileSync(defaultImagePath);
       } catch (error) {
         console.error("❌ 기본 이미지 파일을 읽을 수 없습니다:", error);
-        picture = Buffer.alloc(0); // 🚨 파일이 없을 경우 빈 데이터 저장
+        picture = Buffer.alloc(0);
+      }
+    }
+
+    // ✅ 2. 새 파일이 업로드된 경우
+    else if (req.file) {
+      picture = req.file.buffer;
+    }
+
+    // ✅ 3. 아무것도 변경되지 않은 경우 (기존 이미지 유지)
+    else if (!existingPicture) {
+      console.log("✅ 기존 이미지 유지");
+      const [rows] = await db.execute(
+        "SELECT picture FROM babyinfo WHERE babyid = ?",
+        [babyid]
+      );
+      if (rows.length > 0) {
+        picture = rows[0].picture;
       }
     }
 
